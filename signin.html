@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Вход | Art Blog.</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+
+
+    <!-- Custom styles for this template -->
+    <link href="/css/auth.css" rel="stylesheet">
+</head>
+<body class="text-center">
+
+<main class="form-auth">
+    <form method="get" action="/">
+        <img class="mb-4" src="/images/logo.svg" style="width: 120px" alt="" width="72" height="57">
+        <h1 class="h3 mb-3 fw-normal">Вход</h1>
+
+        <div>
+            <div class="form-floating">
+                <input type="text" class="form-control" id="username" placeholder="artblogger">
+                <label for="username">Имя пользователя</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="password" placeholder="Пароль">
+                <label for="password">Пароль</label>
+            </div>
+        </div>
+
+        <div class="checkbox mb-3">
+            <label>
+                <input type="checkbox" value="remember-me"> Запомнить
+            </label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Войти</button>
+        <p class="mt-2 text-muted">
+            <a href="/restore.html" class="text-muted">Забыли пароль</a> или
+            <a href="/signup.html" class="text-muted">Нет аккаунта?</a>
+        </p>
+    </form>
+</main>
+
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Регистрация | Art Blog.</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+
+
+    <!-- Custom styles for this template -->
+    <link href="/css/auth.css" rel="stylesheet">
+</head>
+<body class="text-center">
+
+<main class="form-auth">
+    <form method="get" action="/">
+        <img class="mb-4" src="/images/logo.svg" style="width: 120px" alt="" width="72" height="57">
+        <h1 class="h3 mb-3 fw-normal">Регистрация</h1>
+
+        <div>
+            <div class="form-floating">
+                <input type="text" class="form-control" id="first_name" placeholder="Иван">
+                <label for="first_name">Имя</label>
+            </div>
+            <div class="form-floating">
+                <input type="text" class="form-control" id="last_name" placeholder="Иванов">
+                <label for="last_name">Фамилия</label>
+            </div>
+        </div>
+        <div>
+            <div class="form-floating">
+                <input type="text" class="form-control" id="username" placeholder="artblogger">
+                <label for="username">Имя пользователя</label>
+            </div>
+            <div class="form-floating">
+                <input type="email" class="form-control" id="email" placeholder="art.blogger@art.blog">
+                <label for="email">Электронный адрес</label>
+            </div>
+        </div>
+        <div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="password1" placeholder="Пароль">
+                <label for="password1">Пароль</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="password2" placeholder="Подтверждение пароля">
+                <label for="password2">Подтверждение пароля</label>
+            </div>
+        </div>
+
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Зарегистрироваться</button>
+        <p class="mt-2 text-muted">
+            <a href="/signin.html" class="text-muted">Есть аккаунт?</a> или
+            <a href="/restore.html" class="text-muted">Забыли пароль</a>
+        </p>
+    </form>
+</main>
+
+
+</body>
+</html>
