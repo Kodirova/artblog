@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="ru">
 <head>
@@ -6,24 +7,24 @@
     <title>Восстановление | Art Blog.</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet"
+    <link href="{% static '/css/bootstrap.min.css' %}" rel="stylesheet"
           integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
 
 
-    <!-- Custom styles for this template -->
-    <link href="/css/auth.css" rel="stylesheet">
+    <!-- Custom styles for this templates -->
+    <link href="{% static '/css/auth.css' %}" rel="stylesheet">
 </head>
 <body class="text-center">
 
 <main class="form-auth">
-    <form method="get" action="/restore-email-sent.html">
+    <form method="post" action="">
         <img class="mb-4" src="/images/logo.svg" style="width: 120px" alt="" width="72" height="57">
         <h1 class="h3 mb-3 fw-normal">Восстановить доступ</h1>
-
+{% csrf_token %}
         <div>
             <div class="form-floating">
-                <input type="text" class="form-control" id="username" placeholder="artblogger">
-                <label for="username">Имя пользователя</label>
+                <input type="email" class="form-control" id="email" placeholder="artblogger@gmail.com" name="email">
+                <label for="email">Email</label>
             </div>
         </div>
 

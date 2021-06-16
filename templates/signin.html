@@ -1,0 +1,43 @@
+{% load static %}
+{% load crispy_forms_tags %}
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Вход | Art Blog.</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static '/css/bootstrap.min.css' %}" rel="stylesheet"
+          integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+
+
+    <!-- Custom styles for this templates -->
+    <link href="{% static '/css/auth.css' %}" rel="stylesheet">
+</head>
+<body class="text-center">
+
+<main class="form-auth">
+    <form action="" method="post">
+        {% csrf_token %}
+        <img class="mb-4" src="{% static '/images/logo.svg' %}" style="width: 120px" alt="" width="72" height="57">
+        <h1 class="h3 mb-3 fw-normal">Вход</h1>
+
+        {{ form | crispy }}
+
+        <div class="checkbox mb-3">
+            <label>
+                <input type="checkbox" value="remember-me"> Запомнить
+            </label>
+        </div>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Войти</button>
+        <p class="mt-2 text-muted">
+            <a href="{% url 'password_reset' %}" class="text-muted">Забыли пароль</a> или
+            <a href="{% url 'register' %}" class="text-muted">Нет аккаунта?</a>
+        </p>
+    </form>
+</main>
+
+
+</body>
+</html>
