@@ -125,9 +125,21 @@
                         {% csrf_token %}
                         <input type="hidden" name="next" value="{{ request.path }}">
                         {% if object.following %}
-                        <button class="btn btn-outline-danger" type="submit">Unollow</button>
+                        <button class="btn btn-outline-danger" type="submit">Unfollow</button>
                         {% else %}
                         <button class="btn btn-primary" type="submit">Follow</button>
+                        {% endif %}
+                    </form>
+
+
+
+                     <form method="post" action="{% url 'block-create' object.pk %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        {% if object.blocked %}
+                        <button class="btn btn-outline-danger" type="submit">UNBLOCK</button>
+                        {% else %}
+                        <button class="btn btn-primary" type="submit">BLOCK</button>
                         {% endif %}
                     </form>
                 </div>

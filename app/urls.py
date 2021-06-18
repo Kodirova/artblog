@@ -14,6 +14,11 @@ urlpatterns = [
     path('profile/detail/<int:pk>/', ProfileDetailView.as_view(), name='profile-detail'),
     path('profile/list', ProfileListView.as_view(), name='profile-list'),
     path('follow/create/<int:pk>/', FollowUnfollowView.as_view(), name='follow-create'),
+    path('post/create', PostCreateView.as_view(), name='post-create'),
+    path('post/update/<int:pk>/', PostUpdateView.as_view(), name='post-update'),
+    path('post/delete/<int:pk>/', PostDeleteView.as_view(), name='post-delete'),
+    path('comment/create/<int:pk>/', PostCommentCreateView.as_view(), name = 'comment-create'),
+    path('block/create/<int:pk>/', BlockUnblockView.as_view(), name = 'block-create')
 
 
 ]

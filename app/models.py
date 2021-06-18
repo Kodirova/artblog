@@ -33,7 +33,7 @@ class UserBlock(models.Model):
     blocked = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blocked_user')
 
     def __str__(self):
-        return self.user.username
+        return self.user
 
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='author_of_post')
@@ -42,7 +42,7 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.description
+        return self.user.username
 
 class PostComments(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
