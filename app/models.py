@@ -10,6 +10,8 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     picture = models.ImageField(upload_to='static/profile_picture')
 
+
+
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
         if created:
@@ -41,8 +43,13 @@ class Post(models.Model):
     cover_image = models.ImageField(upload_to='static/post', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def comments_count(self):
+        return self.postcomments_set.count()
+
     def __str__(self):
         return self.user.username
+
 
 class PostComments(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

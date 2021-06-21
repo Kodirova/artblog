@@ -1,0 +1,53 @@
+{% extends 'layouts/default.html' %}
+{% load crispy_forms_tags %}
+{% block 'content' %}
+
+<main>
+    <div class="container">
+        <br>
+        <div class="d-flex  ">
+            <div class="flex-shrink-0">
+                <img src="{{post.cover_image.url}}"
+                     style="width: 450px; object-fit: cover;">
+            </div>
+            <div class="flex-grow-1 ms-3">
+
+                <h4 class="mt-0"><a href="{% url 'profile-detail'  post_author.id %}" style="text-decoration: none">
+                    @{{post.user}} </a></h4>
+                <p>{{post.description}}</p>
+
+
+            </div>
+
+        </div>
+        <br>
+        <div class="col-12">
+             {% for comment in comments %}
+                <p>
+                    <img src="{{comment.user.profile.picture.url }}" style="width: 20px; height: 20px; border-radius: 50%" >
+                   <a href="{% url 'profile-detail' comment.user.id %}" style="text-decoration: none; text-decoration: none"> @{{comment.user}}</a>
+                    {{comment}}</p>
+                {% endfor %}
+                <form action="{% url 'comment-create' post.id %}" method="post">
+                    {% csrf_token %}
+                     <input type="hidden" name="next" value="{{ request.path }}">
+                    <div class="form-floating">
+                        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2"
+                                  style="height: 100px" name="comment"></textarea>
+                        <label for="floatingTextarea2">Comments</label>
+                    </div>
+                    <br>
+                   <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button class="btn btn-primary me-md-2" type="submit">
+                            ADD
+                        </button>
+                   </div>
+                </form>
+            </div>
+    </div>
+
+
+    </div>
+</main>
+
+{% endblock %}

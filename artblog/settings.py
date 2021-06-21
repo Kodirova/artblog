@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'crispy_forms',
+    'ckeditor',
     'app'
 ]
 
@@ -113,11 +114,12 @@ USE_L10N = True
 USE_TZ = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.eu.mailgun.org'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'kodirovairosh18@gmail.com'
-EMAIL_HOST_PASSWORD = 'iroda1808'
+EMAIL_HOST_USER = 'postmaster@mail.kimmy.uz'
+EMAIL_HOST_PASSWORD = 'd9c67edba90ed0d30cfcbd8f49d4c962-24e2ac64-194da67e'
+DEFAULT_FROM_EMAIL = 'artblog@kimmy.uz'
 
 
 # Static files (CSS, JavaScript, Images)
@@ -130,6 +132,7 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 try:
     from .local_settings import *

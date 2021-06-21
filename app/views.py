@@ -1,19 +1,20 @@
+from urllib import request
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView as DjangoLoginView, PasswordResetView, \
     PasswordResetDoneView, PasswordResetConfirmView
-from django.views.generic.detail import SingleObjectMixin
-from django.views.generic.edit import FormMixin
 
 # Create your views here.
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect
+
 from django.urls import reverse, reverse_lazy
 from django.views.generic import *
-from django.views.generic.list import MultipleObjectMixin
 
-from app.forms import RegisterForm, FollowerForm
+
+from app.forms import RegisterForm
 from app.models import UserProfile, UserFollow, Post, PostComments, UserBlock
+from artblog import settings
 
 
 class Index(LoginRequiredMixin, TemplateView):
@@ -24,6 +25,16 @@ class Index(LoginRequiredMixin, TemplateView):
         print(self.request.user.profile.__dict__)
         user = self.request.user.profile
         return user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        follower = UserFollow.objects.filter(follower = user).values_list('following')
+
+        print(follower)
+        context['posts']= Post.objects.filter(user__in = follower)
+        return context
+
 
 
 class RegisterView(CreateView):
@@ -39,6 +50,8 @@ class LoginView(DjangoLoginView):
 
     def get_success_url(self):
         return reverse('index')
+
+
 
 
 class PasswordResetView(PasswordResetView):
@@ -76,12 +89,12 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data()
         user = User.objects.filter(profile__id=self.kwargs['pk']).first()
 
+
         context['following'] = UserFollow.objects.filter(following=user,
                                                          follower=self.request.user).exists()
         context['blocked'] = UserBlock.objects.filter(blocked = user, user =self.request.user ).exists()
         context['profile'] = self.request.user.profile
         context['posts'] = Post.objects.all()
-
         context['comments'] = PostComments.objects.all()
         return context
 
@@ -93,8 +106,10 @@ class ProfileListView(LoginRequiredMixin, ListView):
     ordering = ['-id']
 
     def get_queryset(self):
-        objects = UserProfile.objects.filter(user__is_superuser=False)
         user = self.request.user
+
+        objects = UserProfile.objects.filter(user__is_superuser=False).exclude(user=user)
+
         following = UserFollow.objects.filter(follower=user).values_list('following', flat=True)
         blocked =  UserBlock.objects.filter(user=user).values_list('blocked', flat=True)
         for object in objects:
@@ -110,6 +125,7 @@ class FollowUnfollowView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         following = User.objects.get(pk=pk)
         user = request.user
+        user_block = UserBlock.objects.filter(user=user, blocked=following).first()
         user_follow = UserFollow.objects.filter(follower=user, following=following).first()
         if user_follow is None:
             UserFollow.objects.create(follower=user, following=following)
@@ -160,6 +176,7 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
 
 
 class PostCommentCreateView(LoginRequiredMixin, CreateView):
+
     model = PostComments
     fields = ['comment']
     template_name = 'comment-create.html'
@@ -181,8 +198,26 @@ class PostCommentCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('profile-detail', kwargs={'pk': self.request.user.profile.pk})
+        return reverse_lazy('post-detail', kwargs={'pk': self.kwargs['pk']})
 
+
+class PostDetailView(LoginRequiredMixin,DetailView):
+    model = Post
+    template_name = 'post_detail.html'
+    fields = '__all__'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = Post.objects.filter(id=self.kwargs['pk']).values_list('user').first()
+        print(post)
+        context['posts'] = Post.objects.filter(id=self.kwargs['pk'])
+        context['comments'] = PostComments.objects.filter(post=self.kwargs['pk'])
+        post_author = UserProfile.objects.get(user_id=post)
+
+        context['post_author'] = post_author
+
+
+        return context
 
 # _____________________________________________________________________________________________________________________
 class BlockUnblockView(LoginRequiredMixin, View):
@@ -201,3 +236,37 @@ class BlockUnblockView(LoginRequiredMixin, View):
 
     def get_success_url(self):
         return reverse('profile-list')
+
+
+
+class FolowingListView(LoginRequiredMixin,ListView):
+    model = UserProfile
+    template_name = 'following-list.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['users']=UserFollow.objects.filter(follower=user)
+        return context
+
+
+class FolowerListView(LoginRequiredMixin,ListView):
+    model = UserProfile
+    template_name = 'follower_list.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['users']=UserFollow.objects.filter(following=user)
+        return context
+
+
+class BlockedUsersListView(LoginRequiredMixin, ListView):
+    model = UserProfile
+    template_name = 'blocked_users_list.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['users']=UserBlock.objects.filter(user=user)
+        return context
