@@ -7,9 +7,7 @@
     <div class="row g-5">
         <div class="col-md-8">
             {% if blocked %}
-            <p>
-                User blocked
-            </p>
+          <img src="{% static 'images/blocked_user.jpg' %}">
             {% else %}
             {% for post in posts %}
 
