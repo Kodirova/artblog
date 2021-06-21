@@ -3,9 +3,10 @@ from urllib import request
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView as DjangoLoginView, PasswordResetView, \
-    PasswordResetDoneView, PasswordResetConfirmView
+    PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 
 # Create your views here.
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 
 from django.urls import reverse, reverse_lazy
@@ -63,7 +64,11 @@ class PasswordResetDoneView(PasswordResetDoneView):
 
 
 class PasswordResetConfirmView(PasswordResetConfirmView):
-    template_name = 'password_reset_confirm.htm'
+    template_name = 'password_reset_confirm.html'
+
+
+class PasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = 'password_reset_complete.html'
 
 
 # ________________________________________________________________________________________________________________
@@ -88,7 +93,10 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         user = User.objects.filter(profile__id=self.kwargs['pk']).first()
-
+        context['following_count']= UserFollow.objects.filter(following=user,
+                                                         follower=self.request.user).count()
+        context['follower_count'] = UserFollow.objects.filter(follower=user,
+                                                               following=self.request.user).count()
 
         context['following'] = UserFollow.objects.filter(following=user,
                                                          follower=self.request.user).exists()
@@ -107,11 +115,10 @@ class ProfileListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user
-
         objects = UserProfile.objects.filter(user__is_superuser=False).exclude(user=user)
-
         following = UserFollow.objects.filter(follower=user).values_list('following', flat=True)
         blocked =  UserBlock.objects.filter(user=user).values_list('blocked', flat=True)
+
         for object in objects:
             setattr(object, 'following', object.id in following)
             setattr(object, 'blocked', object.id in blocked)
@@ -125,10 +132,14 @@ class FollowUnfollowView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         following = User.objects.get(pk=pk)
         user = request.user
-        user_block = UserBlock.objects.filter(user=user, blocked=following).first()
+        user_block = UserBlock.objects.filter(blocked = user, user =self.request.user).exists()
+
+
         user_follow = UserFollow.objects.filter(follower=user, following=following).first()
-        if user_follow is None:
-            UserFollow.objects.create(follower=user, following=following)
+        if user_follow is None and  user_block is False :
+                UserFollow.objects.create(follower=user, following=following)
+        elif user_block is True:
+            user_follow.delete()
         else:
             user_follow.delete()
         next = request.POST.get('next', '/')
@@ -227,8 +238,10 @@ class BlockUnblockView(LoginRequiredMixin, View):
         blocked = User.objects.get(pk=pk)
         user = request.user
         user_block = UserBlock.objects.filter(user=user, blocked=blocked).first()
+        user_follow = UserFollow.objects.filter(Q(follower=user, following=blocked )|Q(follower=blocked, following=user)).first()
         if user_block is None:
             UserBlock.objects.create(user=user, blocked=blocked)
+            user_follow.delete()
         else:
             user_block.delete()
         next = request.POST.get('next', '/')

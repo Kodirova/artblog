@@ -18,19 +18,20 @@
 
 <main class="form-auth">
     <form method="post" action="">
-        <img class="mb-4" src="/images/logo.svg" style="width: 120px" alt="" width="72" height="57">
+        <img class="mb-4" src="{% static 'images/logo.svg' %}" style="width: 120px" alt="" width="72" height="57">
         <h1 class="h3 mb-3 fw-normal">Восстановить доступ</h1>
-{% csrf_token %}
-        <div>
-            <div class="form-floating">
-                <input type="email" class="form-control" id="email" placeholder="artblogger@gmail.com" name="email">
-                <label for="email">Email</label>
-            </div>
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com"
+                   name="email"> <button class="w-100 btn btn-lg btn-primary" type="submit">Reset</button>
         </div>
 
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Восстановить</button>
-        <p class="mt-2 text-muted">
-            <a href="/signin.html" class="text-muted">Есть аккаунт?</a>
+
+
+        <p class="mt-2 text-muted ">
+            <a href="{% url 'login' %}" class="text-muted"  >Already have account?</a>
         </p>
     </form>
 </main>

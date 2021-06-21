@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="ru">
 <head>
@@ -11,13 +12,13 @@
 
 
     <!-- Custom styles for this templates -->
-    <link href="/css/auth.css" rel="stylesheet">
+    <link href="{% static 'css/auth.css' %}" rel="stylesheet">
 </head>
 <body class="text-center">
 
 <main class="form-auth">
     <form method="get" action="/restore.html">
-        <img class="mb-4" src="/images/logo.svg" style="width: 120px" alt="" width="72" height="57">
+        <img class="mb-4" src="{% static 'images/logo.svg' %}" style="width: 120px" alt="" width="72" height="57">
         <h1 class="h3 mb-3 fw-normal">Восстановить доступ</h1>
 
         <div class="alert alert-primary" role="alert">

@@ -6,8 +6,15 @@
 <main class="container pt-5">
     <div class="row g-5">
         <div class="col-md-8">
+            {% if user.blocked %}
+            <p>
+                User blocked
+            </p>
+{% else %}
             {% for post in posts %}
+
             {% if post.user == object.user %}
+
             <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
                 <div class="col p-4 d-flex flex-column position-static">
 
@@ -18,8 +25,9 @@
                         writes:
                     </p>
 
-                  <p>{{post.comments_count}} comment </p>
+
                     <p class="card-text mb-auto">{{ post.description }}</p>
+                    <p>{{post.comments_count}} comment </p>
                     <a href="{% url 'post-detail' post.id %}">Continue reading</a>
                 </div>
                 {% if post.cover_image %}
@@ -30,7 +38,10 @@
                 {% endif %}
             </div>
             {% endif %}
+
             {% endfor %}
+            {% endif %}
+
         </div>
         <div class="col-md-4">
             <div class="position-sticky text-center" style="top: 2rem;">
@@ -52,7 +63,9 @@
                     </div>
                     <h4 class="fst-italic">{{ object.user.first_name }} {{ object.user.last_name }}</h4>
                     <p class="text-muted">@{{ object.user.username }}<br>{{ object.user.email }}</p>
-                    <p  class="text-muted">{{object.follower_count}} </p>
+                    <p  class="text-muted">Following : {{following_count}} </p>
+                    <p  class="text-muted">Followers :  {{follower_count}} </p>
+
                     <div>
                         {% if object == profile %}
                         <a style="text-decoration: none" href="{% url 'profile-update' %}">
@@ -62,9 +75,11 @@
                             <button class="btn btn-primary" type="button"> ADD POST</button>
                         </a>
                         {% else %}
-                        {% if following %}
+{% if blocked == False %}
+
                         <form method="post" action="{% url 'follow-create' object.pk %}">
                             {% csrf_token %}
+                             {% if following %}
                             <input type="hidden" name="next" value="{{ request.path }}">
                             <button class="btn btn-outline-danger" type="submit">Unfollow</button>
                             {% else %}
@@ -72,16 +87,28 @@
                             {% endif %}
                         </form>
 
+<br>
 
-                        {% if blocked %}
                         <form method="post" action="{% url 'block-create' object.pk %}">
                             {% csrf_token %}
+                            {% if blocked %}
                             <input type="hidden" name="next" value="{{ request.path }}">
                             <button class="btn btn-outline-danger" type="submit">UNBLOCK</button>
                             {% else %}
                             <button class="btn btn-primary" type="submit">BLOCK</button>
                             {% endif %}
                         </form>
+{% else %}
+                           <form method="post" action="{% url 'block-create' object.pk %}">
+                            {% csrf_token %}
+                            {% if blocked %}
+                            <input type="hidden" name="next" value="{{ request.path }}">
+                            <button class="btn btn-outline-danger" type="submit">UNBLOCK</button>
+                            {% else %}
+                            <button class="btn btn-primary" type="submit">BLOCK</button>
+                            {% endif %}
+                        </form>
+{% endif %}
                         {% endif %}
                     </div>
                 </div>

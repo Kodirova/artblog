@@ -21,14 +21,14 @@
     <form action="" method="post">
                {% csrf_token %}
         <img class="mb-4" src="{% static '/images/logo.svg' %}" style="width: 120px" alt="" width="72" height="57">
-        <h1 class="h3 mb-3 fw-normal">Регистрация</h1>
+        <h1 class="h3 mb-3 fw-normal">Registration</h1>
 
         {{ form | crispy}}
 
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Зарегистрироваться</button>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Register</button>
         <p class="mt-2 text-muted">
-            <a href="/signin.html" class="text-muted">Есть аккаунт?</a> или
-            <a href="/restore.html" class="text-muted">Забыли пароль</a>
+            <a href="{% url 'login' %}" class="text-muted">Already have account?</a> or
+            <a href="{% url 'password_reset' %}" class="text-muted">Forget the password</a>
         </p>
     </form>
 </main>

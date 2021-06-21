@@ -31,13 +31,11 @@ class UserProfile(models.Model):
 
     @property
     def is_blocked(self, user):
-        return UserBlock(user=user).exists() or UserBlock(user=self.user)
+        return UserBlock(user=user).exists() or UserBlock(user=self.user).exists()
 
     @property
     def is_follower(self, user):
         return UserFollow(follower=self.user, following=user)
-
-
 
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
