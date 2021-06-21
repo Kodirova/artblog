@@ -4,14 +4,18 @@
 <main class="container">
     <div class="my-3 p-3 bg-body rounded shadow-sm">
         <h6 class="border-bottom pb-2 mb-0">Followers</h6>
+
+ {% if follower is False %}
         <div class="d-flex text-muted pt-3">
-        {% if follower is None %}
         <p>
             No Followers Yet
         </p>
         </div>
         {% else %}
         {% for user in users %}
+
+
+
         <div class="d-flex text-muted pt-3">
             <img style="  width: 40px; height: 40px;"
                  src="{{ user.follower.profile.picture.url }}" alt="foto  of following">
@@ -27,8 +31,10 @@
             </div>
 
         </div>
+
         {% endfor %}
         {% endif %}
+
 
 
     </div>

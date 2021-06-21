@@ -7,8 +7,8 @@
         <br>
         <div class="d-flex  ">
             <div class="flex-shrink-0">
-                <img src="{{post.cover_image.url}}"
-                     style="width: 450px; object-fit: cover;">
+                <img style="max-width: 40%"  class="rounded float-start" alt="..." src="{{post.cover_image.url}}"
+                    >
             </div>
             <div class="flex-grow-1 ms-3">
 
@@ -20,7 +20,7 @@
             </div>
 
         </div>
-        <br>
+      <hr>
         <div class="col-12">
              {% for comment in comments %}
                 <p>
@@ -37,7 +37,7 @@
                         <label for="floatingTextarea2">Comments</label>
                     </div>
                     <br>
-                   <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                   <div class="mb-4 justify-content-end">
                         <button class="btn btn-primary me-md-2" type="submit">
                             ADD
                         </button>

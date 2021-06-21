@@ -23,18 +23,15 @@ class Index(LoginRequiredMixin, TemplateView):
     template_name = 'index.html'
 
     def get_object(self):
-        print(self.request.user.profile)
-        print(self.request.user.profile.__dict__)
         user = self.request.user.profile
         return user
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
-        follower = UserFollow.objects.filter(follower = user).values_list('following')
-
-        print(follower)
-        context['posts']= Post.objects.filter(user__in = follower)
+        context['user']=self.request.user.profile
+        profile = self.request.user
+        follower = UserFollow.objects.filter(follower = profile).values_list('following')
+        context['posts']= Post.objects.filter(Q(user__in = follower) | Q(user = self.request.user))
         return context
 
 
@@ -103,9 +100,10 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
         context['following'] = UserFollow.objects.filter(following=user,
                                                          follower=self.request.user).exists()
         context['blocked'] = UserBlock.objects.filter(blocked = user, user =self.request.user ).exists()
-        context['profile'] = self.request.user.profile
+
         context['posts'] = Post.objects.all()
         context['comments'] = PostComments.objects.all()
+        context['user'] = self.request.user.profile
         return context
 
 
@@ -115,6 +113,11 @@ class ProfileListView(LoginRequiredMixin, ListView):
     template_name = 'profile_list.html'
     ordering = ['-id']
     paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['user'] = self.request.user.profile
+        return context
 
     def get_queryset(self):
         user = self.request.user
@@ -170,6 +173,11 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         object = UserProfile.objects.filter(user__id=self.kwargs['pk'])
         return object
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['user'] = self.request.user.profile
+        return context
+
     def get_success_url(self, **kwargs):
         return reverse_lazy('profile-detail', kwargs={'pk': self.request.user.profile.pk})
 
@@ -197,6 +205,7 @@ class PostCommentCreateView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user.profile
         context['posts'] = Post.objects.filter(id=self.kwargs['pk'])
         context['comments'] = PostComments.objects.filter(post=self.kwargs['pk'])
         print(context)
@@ -223,7 +232,7 @@ class PostDetailView(LoginRequiredMixin,DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         post = Post.objects.filter(id=self.kwargs['pk']).values_list('user').first()
-        print(post)
+        context['user'] = self.request.user.profile
         context['posts'] = Post.objects.filter(id=self.kwargs['pk'])
         context['comments'] = PostComments.objects.filter(post=self.kwargs['pk'])
         post_author = UserProfile.objects.get(user_id=post)
@@ -263,11 +272,13 @@ class FolowingListView(LoginRequiredMixin,ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
+        context['user'] = self.request.user.profile
+        context['following']=UserFollow.objects.filter(follower=user).exists()
         context['users']=UserFollow.objects.filter(follower=user)
         return context
 
 
-class FolowerListView(LoginRequiredMixin,ListView):
+class FolowerListView(LoginRequiredMixin, ListView):
     model = UserProfile
     template_name = 'follower_list.html'
     paginate_by = 10
@@ -275,6 +286,8 @@ class FolowerListView(LoginRequiredMixin,ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
+        context['user'] = self.request.user.profile
+        context['follower'] = UserFollow.objects.filter(following=user).exists()
         context['users']=UserFollow.objects.filter(following=user)
         return context
 
@@ -287,5 +300,7 @@ class BlockedUsersListView(LoginRequiredMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
+        context['user'] = self.request.user.profile
+
         context['users']=UserBlock.objects.filter(user=user)
         return context
