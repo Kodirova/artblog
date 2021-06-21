@@ -5,10 +5,37 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+class UserFollow(models.Model):
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower')
+    following = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
+
+    def __str__(self):
+        return self.follower.username
+
+
+class UserBlock(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
+    blocked = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blocked_user')
+
+    def __str__(self):
+        return self.user
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     picture = models.ImageField(upload_to='static/profile_picture')
+
+    @property
+    def is_following(self, user):
+        return UserFollow(follower=user, following=self.user).exists()
+
+    @property
+    def is_blocked(self, user):
+        return UserBlock(user=user).exists() or UserBlock(user=self.user)
+
+    @property
+    def is_follower(self, user):
+        return UserFollow(follower=self.user, following=user)
 
 
 
