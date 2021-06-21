@@ -23,7 +23,7 @@ class UserBlock(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    picture = models.ImageField(upload_to='static/profile_picture')
+    picture = models.ImageField(upload_to='profile_picture')
 
     @property
     def is_following(self, user):
@@ -65,7 +65,7 @@ class UserBlock(models.Model):
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='author_of_post')
     description = models.CharField(max_length=1024)
-    cover_image = models.ImageField(upload_to='static/post', blank=True)
+    cover_image = models.ImageField(upload_to='post', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     @property

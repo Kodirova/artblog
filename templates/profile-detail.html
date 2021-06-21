@@ -6,6 +6,11 @@
 <main class="container pt-5">
     <div class="row g-5">
         <div class="col-md-8">
+            {% if post is None %}
+            <h4 class="fst-italic text-center py-3">No posts there...</h4>
+            {% else %}
+            
+            
             {% if blocked %}
           <img src="{% static 'images/blocked_user.jpg' %}">
             {% else %}
@@ -38,6 +43,7 @@
             {% endif %}
 
             {% endfor %}
+            {% endif %}
             {% endif %}
 
         </div>

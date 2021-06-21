@@ -1,7 +1,31 @@
-{% load static %}
+{% extends 'layouts/default.html' %}
 {% load crispy_forms_tags %}
-<form action="" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{form | crispy }}
-    <button type="submit">Сохранить</button>
-</form>
+{% block 'content' %}
+
+<main>
+    <section class="py-5 text-center container">
+        <div class="row py-lg-5">
+            <div class="col-lg-6 col-md-8 mx-auto">
+                <h1 class="fw-light"> Update Profile </h1>
+                <form action="" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="formFile" class="form-label">Add Profile Picture</label>
+                        <input class="form-control" type="file" id="formFile" name="picture">
+                    </div>
+
+                    <br>
+                    <div class="d-grid gap-2 col-6 mx-auto">
+                        <button class="btn btn-outline-dark" type="submit">Add</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </section>
+
+
+</main>
+</main>
+
+{% endblock %}

@@ -83,7 +83,7 @@ class UserProfileCreateView(LoginRequiredMixin, UpdateView):
         return self.request.user.profile
 
     def get_success_url(self):
-        return reverse('index')
+        return reverse_lazy('profile-detail', kwargs={'pk': self.request.user.profile.pk})
 
 
 class ProfileDetailView(LoginRequiredMixin, DetailView):
@@ -114,6 +114,7 @@ class ProfileListView(LoginRequiredMixin, ListView):
     fields = '__all__'
     template_name = 'profile_list.html'
     ordering = ['-id']
+    paginate_by = 10
 
     def get_queryset(self):
         user = self.request.user
@@ -257,6 +258,7 @@ class BlockUnblockView(LoginRequiredMixin, View):
 class FolowingListView(LoginRequiredMixin,ListView):
     model = UserProfile
     template_name = 'following-list.html'
+    paginate_by = 10
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -268,6 +270,7 @@ class FolowingListView(LoginRequiredMixin,ListView):
 class FolowerListView(LoginRequiredMixin,ListView):
     model = UserProfile
     template_name = 'follower_list.html'
+    paginate_by = 10
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -279,6 +282,7 @@ class FolowerListView(LoginRequiredMixin,ListView):
 class BlockedUsersListView(LoginRequiredMixin, ListView):
     model = UserProfile
     template_name = 'blocked_users_list.html'
+    paginate_by = 10
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
