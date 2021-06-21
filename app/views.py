@@ -19,6 +19,7 @@ from artblog import settings
 
 
 class Index(LoginRequiredMixin, TemplateView):
+    paginate_by = 2
     template_name = 'index.html'
 
     def get_object(self):
@@ -86,6 +87,7 @@ class UserProfileCreateView(LoginRequiredMixin, UpdateView):
 
 
 class ProfileDetailView(LoginRequiredMixin, DetailView):
+    paginate_by = 2
     model = UserProfile
     template_name = 'profile-detail.html'
     fields = '__all__'
@@ -93,9 +95,9 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         user = User.objects.filter(profile__id=self.kwargs['pk']).first()
-        context['following_count']= UserFollow.objects.filter(following=user,
+        context['following_count']= UserFollow.objects.filter(
                                                          follower=self.request.user).count()
-        context['follower_count'] = UserFollow.objects.filter(follower=user,
+        context['follower_count'] = UserFollow.objects.filter(
                                                                following=self.request.user).count()
 
         context['following'] = UserFollow.objects.filter(following=user,
