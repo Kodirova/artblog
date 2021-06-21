@@ -12,7 +12,7 @@
 
             <div class="pb-3 mb-0 small lh-sm border-bottom w-100">
                 <div class="d-flex justify-content-between">
-                    <a href="#">
+                    <a href="{% url 'profile-detail' user.following.id %}">
                         <strong class="text-gray-dark">{{user.following}}</strong>
                     </a>
                 </div>

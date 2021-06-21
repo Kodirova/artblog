@@ -6,7 +6,7 @@
 <main class="container pt-5">
     <div class="row g-5">
         <div class="col-md-8">
-            {% if user.blocked %}
+            {% if blocked %}
             <p>
                 User blocked
             </p>
@@ -66,9 +66,10 @@
                     <p class="text-muted">Following :
                         <a href="{% url 'following-list' %}" style="text-decoration: none">{{ following_count}}</a></p>
                     <p class="text-muted">Followers : <a href="{% url 'follower-list' %}" style="text-decoration: none">
-                        {{ follower_count}}<a></p>
+                        {{ follower_count}}</a></p>
 
                     <div>
+
                         {% if object == profile %}
                         <a style="text-decoration: none" href="{% url 'profile-update' %}">
                             <button class="btn btn-primary" type="button"> Edit</button>
@@ -77,8 +78,7 @@
                             <button class="btn btn-primary" type="button"> ADD POST</button>
                         </a>
                         {% else %}
-                        {% if blocked == False %}
-
+ {% if object.blocked == False %}
                         <form method="post" action="{% url 'follow-create' object.pk %}">
                             {% csrf_token %}
                             {% if following %}
@@ -100,8 +100,8 @@
                             <button class="btn btn-primary" type="submit">BLOCK</button>
                             {% endif %}
                         </form>
-                        {% else %}
-                        <form method="post" action="{% url 'block-create' object.pk %}">
+{% else %}
+ <form method="post" action="{% url 'block-create' object.pk %}">
                             {% csrf_token %}
                             {% if blocked %}
                             <input type="hidden" name="next" value="{{ request.path }}">
