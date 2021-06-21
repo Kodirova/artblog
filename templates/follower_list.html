@@ -5,36 +5,29 @@
     <div class="my-3 p-3 bg-body rounded shadow-sm">
         <h6 class="border-bottom pb-2 mb-0">Followers</h6>
 
- {% if follower is False %}
+        {% if follower is False %}
         <div class="d-flex text-muted pt-3">
-        <p>
-            No Followers Yet
-        </p>
+            <p>
+                No Followers Yet
+            </p>
         </div>
         {% else %}
         {% for user in users %}
 
 
-
-        <div class="d-flex text-muted pt-3">
-            <img style="  width: 40px; height: 40px;"
-                 src="{{ user.follower.profile.picture.url }}" alt="foto  of following">
-
-
-            <div class="pb-3 mb-0 small lh-sm border-bottom w-100">
-                <div class="d-flex justify-content-between">
-                    <a href="#">
-                        <strong class="text-gray-dark">{{user.follower}}</strong>
-                    </a>
-                </div>
-                <span class="d-block">{{user.follower.email}}</span>
+        <div class="d-flex align-items-center">
+            <div class="flex-shrink-0">
+                <img style="  width: 40px; height: 40px;"
+                     src="{{ user.follower.profile.avatar_full }}" alt="following">
             </div>
-
+            <div class="flex-grow-1 ms-3">
+                <strong class="text-dark"> <a href="{% url 'profile-detail' user.follower.id %}">{{user.follower}}</a></strong>
+                <span class="text-muted d-block">{{user.follower.email}}</span>
+            </div>
         </div>
 
         {% endfor %}
         {% endif %}
-
 
 
     </div>

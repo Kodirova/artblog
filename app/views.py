@@ -12,7 +12,6 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import *
 
-
 from app.forms import RegisterForm
 from app.models import UserProfile, UserFollow, Post, PostComments, UserBlock
 from artblog import settings
@@ -28,12 +27,11 @@ class Index(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user']=self.request.user.profile
+        context['user'] = self.request.user.profile
         profile = self.request.user
-        follower = UserFollow.objects.filter(follower = profile).values_list('following')
-        context['posts']= Post.objects.filter(Q(user__in = follower) | Q(user = self.request.user))
+        follower = UserFollow.objects.filter(follower=profile).values_list('following')
+        context['posts'] = Post.objects.filter(Q(user__in=follower) | Q(user=self.request.user))
         return context
-
 
 
 class RegisterView(CreateView):
@@ -49,8 +47,6 @@ class LoginView(DjangoLoginView):
 
     def get_success_url(self):
         return reverse('index')
-
-
 
 
 class PasswordResetView(PasswordResetView):
@@ -92,14 +88,14 @@ class ProfileDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         user = User.objects.filter(profile__id=self.kwargs['pk']).first()
-        context['following_count']= UserFollow.objects.filter(
-                                                         follower=self.request.user).count()
+        context['following_count'] = UserFollow.objects.filter(
+            follower=self.kwargs['pk']).count()
         context['follower_count'] = UserFollow.objects.filter(
-                                                               following=self.request.user).count()
+            following=self.kwargs['pk']).count()
 
         context['following'] = UserFollow.objects.filter(following=user,
                                                          follower=self.request.user).exists()
-        context['blocked'] = UserBlock.objects.filter(blocked = user, user =self.request.user ).exists()
+        context['blocked'] = UserBlock.objects.filter(blocked=user, user=self.request.user).exists()
 
         context['posts'] = Post.objects.all()
         context['comments'] = PostComments.objects.all()
@@ -123,7 +119,7 @@ class ProfileListView(LoginRequiredMixin, ListView):
         user = self.request.user
         objects = UserProfile.objects.filter(user__is_superuser=False).exclude(user=user)
         following = UserFollow.objects.filter(follower=user).values_list('following', flat=True)
-        blocked =  UserBlock.objects.filter(user=user).values_list('blocked', flat=True)
+        blocked = UserBlock.objects.filter(user=user).values_list('blocked', flat=True)
 
         for object in objects:
             setattr(object, 'following', object.id in following)
@@ -138,16 +134,17 @@ class FollowUnfollowView(LoginRequiredMixin, View):
     def post(self, request, pk, *args, **kwargs):
         following = User.objects.get(pk=pk)
         user = request.user
-        user_block = UserBlock.objects.filter(blocked = user, user =self.request.user).exists()
-
+        user_block = UserBlock.objects.filter(blocked=user, user=self.request.user).exists()
 
         user_follow = UserFollow.objects.filter(follower=user, following=following).first()
-        if user_follow is None and  user_block is False :
-                UserFollow.objects.create(follower=user, following=following)
+        if user_follow is None and user_block is False:
+            UserFollow.objects.create(follower=user, following=following)
         elif user_block is True:
-            user_follow.delete()
+            if user_follow is not None:
+                user_follow.delete()
         else:
-            user_follow.delete()
+            if user_follow is not None:
+                user_follow.delete()
         next = request.POST.get('next', '/')
         return HttpResponseRedirect(next)
 
@@ -198,7 +195,6 @@ class PostDeleteView(LoginRequiredMixin, DeleteView):
 
 
 class PostCommentCreateView(LoginRequiredMixin, CreateView):
-
     model = PostComments
     fields = ['comment']
     template_name = 'comment-create.html'
@@ -224,7 +220,7 @@ class PostCommentCreateView(LoginRequiredMixin, CreateView):
         return reverse_lazy('post-detail', kwargs={'pk': self.kwargs['pk']})
 
 
-class PostDetailView(LoginRequiredMixin,DetailView):
+class PostDetailView(LoginRequiredMixin, DetailView):
     model = Post
     template_name = 'post_detail.html'
     fields = '__all__'
@@ -239,8 +235,8 @@ class PostDetailView(LoginRequiredMixin,DetailView):
 
         context['post_author'] = post_author
 
-
         return context
+
 
 # _____________________________________________________________________________________________________________________
 class BlockUnblockView(LoginRequiredMixin, View):
@@ -250,10 +246,12 @@ class BlockUnblockView(LoginRequiredMixin, View):
         blocked = User.objects.get(pk=pk)
         user = request.user
         user_block = UserBlock.objects.filter(user=user, blocked=blocked).first()
-        user_follow = UserFollow.objects.filter(Q(follower=user, following=blocked )|Q(follower=blocked, following=user)).first()
+        user_follow = UserFollow.objects.filter(
+            Q(follower=user, following=blocked) | Q(follower=blocked, following=user)).first()
         if user_block is None:
             UserBlock.objects.create(user=user, blocked=blocked)
-            user_follow.delete()
+            if user_follow is not None:
+                user_follow.delete()
         else:
             user_block.delete()
         next = request.POST.get('next', '/')
@@ -263,8 +261,7 @@ class BlockUnblockView(LoginRequiredMixin, View):
         return reverse('profile-list')
 
 
-
-class FolowingListView(LoginRequiredMixin,ListView):
+class FolowingListView(LoginRequiredMixin, ListView):
     model = UserProfile
     template_name = 'following-list.html'
     paginate_by = 10
@@ -273,8 +270,8 @@ class FolowingListView(LoginRequiredMixin,ListView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         context['user'] = self.request.user.profile
-        context['following']=UserFollow.objects.filter(follower=user).exists()
-        context['users']=UserFollow.objects.filter(follower=user)
+        context['following'] = UserFollow.objects.filter(follower=user).exists()
+        context['users'] = UserFollow.objects.filter(follower=user)
         return context
 
 
@@ -288,7 +285,7 @@ class FolowerListView(LoginRequiredMixin, ListView):
         user = self.request.user
         context['user'] = self.request.user.profile
         context['follower'] = UserFollow.objects.filter(following=user).exists()
-        context['users']=UserFollow.objects.filter(following=user)
+        context['users'] = UserFollow.objects.filter(following=user)
         return context
 
 
@@ -302,5 +299,5 @@ class BlockedUsersListView(LoginRequiredMixin, ListView):
         user = self.request.user
         context['user'] = self.request.user.profile
 
-        context['users']=UserBlock.objects.filter(user=user)
+        context['users'] = UserBlock.objects.filter(user=user)
         return context

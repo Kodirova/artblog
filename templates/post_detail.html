@@ -24,7 +24,7 @@
         <div class="col-12">
              {% for comment in comments %}
                 <p>
-                    <img src="{{comment.user.profile.picture.url }}" style="width: 20px; height: 20px; border-radius: 50%" >
+                    <img src="{{comment.user.profile.avatar_full}}" style="width: 20px; height: 20px; border-radius: 50%" >
                    <a href="{% url 'profile-detail' comment.user.id %}" style="text-decoration: none; text-decoration: none"> @{{comment.user}}</a>
                     {{comment}}</p>
                 {% endfor %}

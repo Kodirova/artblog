@@ -1,9 +1,12 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+
 # Create your models here.
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.templatetags.static import static
+
 
 class UserFollow(models.Model):
     follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower')
@@ -26,14 +29,21 @@ class UserProfile(models.Model):
     picture = models.ImageField(upload_to='profile_picture')
 
     @property
+    def avatar_full(self):
+        if self.picture:
+            return self.picture.url
+        else:
+            return static('/images/anonymous.jpg')
+
+
     def is_following(self, user):
         return UserFollow(follower=user, following=self.user).exists()
 
-    @property
+
     def is_blocked(self, user):
         return UserBlock(user=user).exists() or UserBlock(user=self.user).exists()
 
-    @property
+
     def is_follower(self, user):
         return UserFollow(follower=self.user, following=user)
 

@@ -9,10 +9,10 @@
             {% if posts is None %}
             <h4 class="fst-italic text-center py-3">No posts there...</h4>
             {% else %}
-            
-            
+
+
             {% if blocked %}
-          <img src="{% static 'images/blocked_user.jpg' %}">
+            <img src="{% static 'images/blocked_user.jpg' %}">
             {% else %}
             {% for post in posts %}
 
@@ -74,7 +74,7 @@
 
                     <div>
 
-                        {% if object == profile %}
+                        {% if posts.user == profile %}
                         <a style="text-decoration: none" href="{% url 'profile-update' %}">
                             <button class="btn btn-primary" type="button"> Edit</button>
                         </a>
@@ -82,7 +82,7 @@
                             <button class="btn btn-primary" type="button"> ADD POST</button>
                         </a>
                         {% else %}
- {% if object.blocked == False %}
+                        {% if object.blocked == False %}
                         <form method="post" action="{% url 'follow-create' object.pk %}">
                             {% csrf_token %}
                             {% if following %}
@@ -104,8 +104,8 @@
                             <button class="btn btn-primary" type="submit">BLOCK</button>
                             {% endif %}
                         </form>
-{% else %}
- <form method="post" action="{% url 'block-create' object.pk %}">
+                        {% else %}
+                        <form method="post" action="{% url 'block-create' object.pk %}">
                             {% csrf_token %}
                             {% if blocked %}
                             <input type="hidden" name="next" value="{{ request.path }}">
